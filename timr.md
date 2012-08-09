@@ -1,30 +1,32 @@
-<div style="float:right;"><a href="http://www.flickr.com/photos/wwarby/3297205226/" title="Stopwatch by wwarby, on Flickr"><img src="http://farm4.staticflickr.com/3443/3297205226_a12b175d49_n.jpg" width="320" height="240" alt="Stopwatch"></a></div>
+<div class="alignright"><a href="http://www.flickr.com/photos/wwarby/3297205226/" title="Stopwatch by wwarby, on Flickr"><img src="http://farm4.staticflickr.com/3443/3297205226_a12b175d49_n.jpg" width="320" height="240" alt="Stopwatch"></a></div>
 One of the fundamental tensions in programming is balancing the program's
 requirements for time (programmer time and running time) against its space
-requirements (disk space and memory space). Optimizing---looking for ways to
-shift that balance, usually to have the program run faster---is a common task.
+requirements (disk space and memory space). Optimizing one of these
+costs---i.e., looking for ways to shift that balance, usually to have the
+program run faster---is a common task.
 
-Recently, I've had to speed up requests on a couple of different websites I've
-worked on: [Neatline][neatline] and a small, personal work-in-progress I call
-[What is DH?][whatisdh].
+Recently, I've needed to speed up requests on a couple of different websites
+I've worked on: [Neatline][neatline] and a small, personal work-in-progress I
+call [What is DH?][whatisdh].
 
 Of course, optimizing programs too early can turn your program into an
-unreadable mess and waste your time to boot. ([The Wikipedia page on Program
+unreadable mess and waste your time. ([The Wikipedia page on Program
 Optmization][progopt] has a good overview of the issues and trade-offs.) The
-rule is: in general, don't optimize. But if you need to, do it right. That's
-where this post comes in.
+rule is: **don't optimize**. But if you must do it, do it right. That's where
+this post comes in.
 
 # Lather, Rinse, Repeat
 
 A typical work flow when optimizing a program goes something like this:
 
-1. Measure how long it takes or now much memory it takes right now.
-2. If it's good enough, stop; otherwise, keep going.
+1. **Measure** how long it takes or now much memory it takes right now. Don't
+   skip this.
+2. If it's good enough, **stop**; otherwise, keep going.
 3. Change something.
-4. Go back to #1.
+4. `GOTO 1`.
 
 That seems simple enough, but it's really quite complicated. For example, in a
-web app, many things could be making a request slow:
+web app, many things slow down requests.
 
 * One slow database query.
 * Too many database queries.
@@ -43,7 +45,8 @@ The timings are also complicated by a number of factors:
 * Your computer/OS may suddenly decide that it has to do some intensive
   computation *right now*, 'cause, well, you know, computers are helpful like
   that.
-* A bunch of small tasks may start up, creating a smaller performance hit.
+* A bunch of small tasks may start up, creating a smaller, but still
+  noticeable, performance hit.
 
 You have no control over any of this, and they will all throw off the timings.
 Generally, I've learned to take a number of measurements (3--5, say), and take
@@ -67,64 +70,72 @@ Or to put it another way:
 
 (And to be fair, the tool I'm getting ready to describe, timr, doesn't help you
 identify which part of your code is taking so much time, but it will tell you
-whether what you changed helped or not.)
+whether what you changed helped or not. Finding bottlenecks will be the subject
+of another blog post.)
 
 # My Kingdom for Some Data
 
 Because you're going to be wrong, optimization is largely a data-driven task.
-What data, you ask?
+What data?
 
 1. Multiple timings for each small change you make. You probably only want to
-   look at each group of timings in aggregate, however.
+   look at a summary each group of timings, however.
 2. The return value of each web request. Whatever you changes you make, you
    probably don't want this to change.
 
-*Data* is just another word for *lots and lots of bookkeeping*, which is
-another way of saying *boring and error-prone*. Often, software developers hate
-*boring and error-prone*, and I'm no exception. As I was working on optimizing
-an AJAX call in Neatline, I created a small script to help me keep track of the
-data I was accumulating. I call this [timr][timr], because leaving out vowels
-is always a good idea.
+*Data* is just another word for *lots of bookkeeping*, which is another way of
+saying *boring and error-prone*. Software developers hate *boring and
+error-prone*, and I'm no exception. As I was working on optimizing an AJAX call
+in Neatline, I created a small script to help me keep track of the data I was
+accumulating. I call this [timr][timr] (because leaving out vowels is always a
+good idea).
 
 # Installing
 
-timr requires Python, and if you have [Python][python] and [Pip][pip], you can
+Timr requires Python, and if you have [Python][python] and [Pip][pip], you can
 install it with:
 
-```bash
+```
+[sourcecode language=bash]
 pip install timr
+[/sourcecode]
 ```
 
 # Using
 
-timr is a command-line tool, and once it's installed, using it is pretty
-straight-forward (I hope).
+Timr is a command-line tool, and once it's installed, using it is pretty
+straight-forward.
 
 ## Configuration Files
 
-Generally, the easiest way to use it is to gather all the command-line
-arguments for a project into an ad hoc configuration file.
+The easiest way to use it is to gather all the command-line arguments for a
+project into an ad hoc configuration file.
 
 For example, save this as `fetch.conf`. It will time a POST request with my
 name, and it will send the output to `fetch-output.csv`:
 
-    --method
-    POST
-    --url
-    http://whatever.com/resource/
-    --header
-    Accept: application/json
-    --data
-    first_name=Eric
-    --data
-    surname=Rochester
-    --output
-    fetch-output.csv
+~~~~~
+[sourcecode autolinks=false]
+--method
+POST
+--url
+http://whatever.com/resource/
+--header
+Accept: application/json
+--data
+first_name=Eric
+--data
+surname=Rochester
+--output
+fetch-output.csv
+[/sourcecode]
+~~~~~
 
-> *NB: Ignore the extra lines around the URL. For some reason, WordPress adds
-> those in, but they shouldn't be there.*
+> *NB: Remove the extra lines around the URL. For some reason, WordPress adds
+> those in, but they shouldn't be there and will cause an error if they're
+> included.*
 
-These won't change between runs, so this provides both consistency and
+These values won't change between runs, so this provides consistency and
 documentation.
 
 ## Fetch
@@ -133,8 +144,10 @@ Now, call `timr fetch` with the arguments from the configuration file, plus the
 message that you want attached to the timing group (in this case, "initial
 timings").
 
-```bash
+```
+[sourcecode language=bash]
 timr fetch @fetch.conf -m "initial timings"
+[/sourcecode]
 ```
 
 This executes the POST request multiple times (4 times, by default) and write
@@ -143,44 +156,54 @@ the resulting times out to a CSV file.
 ## Report
 
 Looking at the raw output isn't that helpful, however. Instead, you want to
-aggregate the timing sessions.
+summarize and aggregate the timing sessions.
 
 Most of the time, I just dump the aggregate data out to the screen:
 
-```bash
+```
+[sourcecode language=bash]
 timr report --input=fetch-output.csv
+[/sourcecode]
 ```
 
 But sometimes I want a pretty chart or graph. Timr doesn't do visualizations,
 but you can send the CSV to a file. This way you could pull it into Excel or
 something that does do visualizations.
 
-```bash
+```
+[sourcecode language=bash]
 timr report --input=fetch-output.csv --output=report-output.csv
+[/sourcecode]
 ```
 
 That's really all there is to it.
 
 ## E.G.
 
-For example, let's see how fast a Google search for "timr" is over a couple of sessions.
+For example, let's see how fast a Google search for *timr* is over a couple of sessions.
 
 First, we'll create a configuration file named `google.conf`:
 
-    --method
-    GET
-    --url
-    http://www.google.com
-    --data
-    q=timr
-    --output
-    google-timr.csv
+~~~~~
+[sourcecode autolinks=false]
+--method
+GET
+--url
+http://www.google.com
+--data
+q=timr
+--output
+google-timr.csv
+[/sourcecode]
+~~~~~
 
 Now run it a couple of times:
 
-```bash
+```
+[sourcecode autolinks=false]
 timr fetch @google.conf -m "initial search"
 timr fetch @google.conf -m "another session"
+[/sourcecode]
 ```
 
 > *This doesn't actually pull up the search results. Instead, it goes to the
@@ -191,7 +214,8 @@ timr fetch @google.conf -m "another session"
 
 Let's see what this outputs:
 
-<div style="width: 100%; overflow-x: scroll; overflow-y: hidden; white-space: nowrap;"><div style="width: 1200px;"><pre><code>
+```
+[sourcecode]
 2012-08-07 10:13:08.871731,03a227c0-e09a-11e1-ad5b-c82a1417b0e9,initial search,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.141083955765
 2012-08-07 10:13:08.871731,03a227c0-e09a-11e1-ad5b-c82a1417b0e9,initial search,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.0433859825134
 2012-08-07 10:13:08.871731,03a227c0-e09a-11e1-ad5b-c82a1417b0e9,initial search,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.0436539649963
@@ -200,37 +224,53 @@ Let's see what this outputs:
 2012-08-07 10:14:03.237169,240e6f5c-e09a-11e1-962c-c82a1417b0e9,another session,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.0447700023651
 2012-08-07 10:14:03.237169,240e6f5c-e09a-11e1-962c-c82a1417b0e9,another session,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.0436999797821
 2012-08-07 10:14:03.237169,240e6f5c-e09a-11e1-962c-c82a1417b0e9,another session,02a0f14a92b4e0070ee17275f1d78c3a7db1ba68,955,0.0441081523895
-</code></pre></div></div>
+[/sourcecode]
+```
 
-The fields here are a timestamp for the run, a unique identifier hash for the
-session, the session message, a SHA hash of the results, the number of bytes
-returned, and the elapsed seconds for the request.
+The fields here are
+
+1. a timestamp for the run,
+2. a unique identifier hash for the session,
+3. the session message,
+4. a SHA hash of the results,
+5. the number of bytes returned, and
+6. the elapsed seconds for the request.
 
 Now let's generate the report, dumping it to a file:
 
-```bash
+```
+[sourcecode language=bash]
 timr report --input=google-timr.csv --output=google-report.csv
+[/sourcecode]
 ```
 
 And this outputs:
 
-<div style="width: 100%; overflow-x: scroll; overflow-y: hidden; white-space: nowrap;"><div style="width: 1200px;"><pre><code>
+```
+[sourcecode]
 03a227c0-e09a-11e1-ad5b-c82a1417b0e9,initial search,0.0433859825134,0.141083955765,0.0681069493294,0.0486528640897
 240e6f5c-e09a-11e1-962c-c82a1417b0e9,another session,0.0436999797821,0.389742851257,0.130580246448,0.172775632452
-</code></pre></div></div>
+[/sourcecode]
+```
 
-The fields here are the session identifier, the session message, and some
-summary statistics on the timings (minimum time, maximum time, mean time, and
-standard deviation).
+The fields here are
+
+1. the session identifier,
+2. the session message, and
+3. some summary statistics on the timings:
+    1. minimum time,
+    2. maximum time,
+    3. mean time, and
+    4. standard deviation.
 
 From this we can see several things:
 
 * The minimum times are very close (0.0433 and 0.434).
-* There's a lot more variance in the maximum times (0.141 and 0.390). This is
-  probably caused by network latency or other issues and doesn't accurately
-  reflect the time it took Google to process the query. Actually, looking at
-  the first outputs, the first request takes the longest, and that could be
-  because the Python VM is warming up.
+* There's a lot more variance in the maximum times (0.141 and 0.390). This
+  could be caused by network latency or other issues and doesn't accurately
+  reflect the time it took Google to process the query. But looking at the
+  output from the `timr fetch` calls, the first request takes the longest, and
+  that could be because the Python VM is warming up.
 * The added time of the first request throws off the mean and standard
   deviation, so they're not that useful either.
 
@@ -242,8 +282,8 @@ Timr is a very new tool, and there are lots of missing features or even bugs.
 If you have a feature request or encounter a problem, please [create a new
 Github issue][newissue].
 
-For example, I could imagine that throwing out the longest or first timing when
-generating the report would be helpful. What do you think?
+For example, I could imagine that having the option to throw out the longest or
+first timing when generating the report would be helpful. What do you think?
 
 [newissue]: https://github.com/erochest/timr/issues/new                        "New Issue"
 [neatline]: http://neatline.scholarslab.org/                                   "Neatline"
