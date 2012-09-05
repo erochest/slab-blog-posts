@@ -1,105 +1,113 @@
 
-I regularly have to perform a small, regular edit on a collection of files.
-I imagine that if you work with computers long enough, that will be something
+I regularly have to perform a short sequence of small, regular edits on
+a collection of files. If you work with computers long enough, that's something
 everyone has to do.
 
-For this task, I usually reach for a scripting language. But often the edit is
-so small that even doing this seems like overkill. Or maybe the edit is just
-the wrong kind of complexity to capture easily with code. My fingers may be
-able to make the change quickly and repetitively, but when I try to break down
-how a script would do it, I get a headache.
+Often I reach for a scripting language. But other times the edit is
+so small that even `sed` seems like overkill. Or maybe the edits are just the
+wrong kind of complexity to capture easily with code. My fingers may be able to
+make the changes quickly and repetitively, but when I try to break down how
+a script would do it, I get a headache.
 
-Over the years, I've been confronted with this often enough that I've developed
-a well-tested approach to this using [Vim][vim]. It's become one of those tools
-that I don't really think about much. I just use it from time to time, and it
-makes my life easier.
+Over the years, I've been confronted with problems like this often enough that
+I've developed a well-tested approach using [Vim][vim]. It's become one of
+those tools that I don't really think much about: I just use it from time to
+time, and it makes my life easier.
 
-But earlier this week, when [Jeremy][clioweb] mentioned that he had a small
-change to make to a series of files in the [NeatlineMaps][nlmaps]. Usually, he
-switches to TextMate for tasks like this, but he agreed that to let me show him
-how to do it in Vim.
+But not long ago, [Jeremy][clioweb] mentioned that he had a small change to
+make to a series of files in [NeatlineMaps][nlmaps]. Usually, he switches to
+TextMate for tasks like this, but he agreed that to let me show him how I would
+handle this in Vim.
 
-Heh. Whenever I try to explain to someone how to do something in Vim,
-I invariably sound like, "Then his *escape*, *4h*, *0*, *o*." It's kind of
-funny, but it's not a lot of fun, either for me or for the person I'm reciting
-keystrokes for.
+Heh.
 
-But it is useful information, and it would definitely be a better blog post
-than a conversation.
+Whenever I try to explain to someone how to do something in Vim, I invariably
+sound like, "Then hit *escape*, *4h*, *0*, now type whatever." It's kind of
+funny, but it's not a lot of fun, either for me or for the person I'm shouting
+keystrokes at.
 
-So here's what we did:
+Hopefully, this will make a better blog post.
+
+Here's what we did:
 
 # The Problem
 
-Jeremy had tried to put some Vim [mode lines][modelines] at the top of the
-files. These are comments at the top of a file for setting options in Vim.
-Currently, they look [like this][nlmapmode]:
+Jeremy had tried to add some Vim [mode lines][modelines] to some PHP files.
+These are comments at the top of a file for setting options in Vim. Currently,
+they look [like this][nlmapmode]:
 
 ```vim
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 ```
 
-But they weren't working. It turned out that he the colon near the end of the
-line was actually a semicolon, and once that was fixed, the settings worked
-fine. But at that point he needed to make that change on almost every file in
+But they weren't working. It turned out that what should have been a colon near
+the end of the line was actually a semicolon, and once that was fixed, the
+settings worked fine.
+
+That was all right. But he needed to make that change on almost every file in
 NeatlineMaps.
 
-The process has three parts, really. Let's break them down.
+# The Solution
 
-# `:args`
+The process I showed him has four parts. Let's break them down.
 
-First, we have to get the files to process. When you open Vim from the
-command-line and pass in files there, the file names are stored in the argument
-list. You can access the argument list inside Vim---either to set the files it
-contains or to see what it says---using the `:args` command:
+## Part One: `:args`
+
+First, we have to load the files to process. When you open Vim from the
+command-line and pass in files there, the file names are stored in the
+[argument list][args]. You can access the argument list inside Vim---either to
+see what files are in it or to set the files it contains---using the `:args`
+command:
 
 ```vim
-:args NealtineMaps/**/*.php
+:args **/*.php
 ```
 
 This searches for all the files in the `NeatlineMaps` directory and
 subdirectories that have a `.php` extension. These files are loaded into the
 argument list.
 
-Now that they're there, we can navigate over the list using some simple
-commands:
+What's nice about the argument list is how easily you can navigate over it
+using a few simple commands:
 
-* `:rewind` Rewinds to the beginning of the list.
+* `:rewind` Moves to the beginning of the list.
 * `:next` Moves to the next file in the list.
 * `:Next` Moves to the previous file in the list.
 * `:previous` Also moves to the previous file in the list.
 * `:last` Moves to the last file in the list.
 
-They can all also be abbreviated. So for example, you can use `:n` and `:N` to
-move forward and backward.
+All these can also be abbreviated. So for example, you can use `:n` and `:N` to
+move forward and backward. Have a `:n` mapped to control-n, so navigating
+forward is especially easy.
 
-# `q`
+## Part Two: `q`
 
-Looking at the first file, now we make the change that we want to make on all
-files. But before we do, we first start recording our keystrokes into a buffer.
-For this we chose the *t* buffer. There's no reason for that particular buffer:
-It was just the first letter I thought of:
+With the first file loaded into the buffer, now we make the change that we want
+to make on all files and record the keystrokes into a buffer. For this we chose
+the *t* buffer. There's no reason for that particular letter: It was just the
+first one I thought of:
 
 ```vim
 qt
 ```
 
-Now the bottom of the Vim screen said `recording`. At this point, we can go
+Now the bottom of the Vim screen should say `recording`. At this point, we go
 ahead and make the edit.
 
-# `:s/../../e`
+## Part Three: `:s/../../e`
 
-What I had Jeremy do was slightly more complicated, but basically, I had him do
-this:
+What I had Jeremy do was slightly more complicated and precise, but basically,
+I had him do this:
 
 ```vim
 :%s/softtabstop=4;/softtabstop=4:/e
 ```
 
-This looked at the whole file (`%`) and performed a search-and-replace (`s`).
-It looked for the string *softtabstop=4;* and replaced it with the same string,
-except it used a colon (*softtabstop=4:*). The `e` at the end just meant that
-it should ignore errors and keep chugging.
+This looks over the whole file (`%`) and performs a search-and-replace (`s`).
+It searches for the string *softtabstop=4;* and replaces it with the same
+string, except it used a colon (*softtabstop=4:*). The `e` at the end just
+means that it should ignore errors and keep chugging. That way, if a file does
+not have a modline (and not all did), it would keep going.
 
 Once we've made the change, let's save it and move to the next file.
 
@@ -109,41 +117,48 @@ Once we've made the change, let's save it and move to the next file.
 
 This combines the *w*rite command and the *n*ext command (from above).
 
-That's what we want to save. Now hit *q* to stop recording:
+That's all we need to do for each file. Now hit *q* to stop recording:
 
 ```vim
 q
 ```
 
 You can replay that now by pressing `@t`. Jeremy and I did that a few times to
-make sure it was doing what we wanted and wasn't chewing up the files.
+make sure it was doing what we wanted and wasn't chewing up the files and
+spitting the pieces back in our faces.
 
-# *n*`@`
+## Part Four: *n*`@`
 
-Once we felt that everything was safe, we moved on to working on the rest of
-the files. Most commands in Vim can take a number before, which tells how many
-times to perform the command. For example, *j* moves down one line, and *10j*
-moves down 10 lines.
+Once you're sure that everything's safe, change the rest of the files. Most
+commands in Vim can take a numerical prefix, which tells Vim how many times to
+perform the command. For example, *j* moves down one line, and *10j* moves down
+10 lines.
 
-In this case, we told it to play the recorded keystrokes 100 times:
+In this case, tell it to play the recorded keystrokes 100 times:
 
 ```vim
 100@t
 ```
 
-And Vim went to work. It stopped on the first error, which happened when
-`:next` reached the last file in the argument list and wasn't able to move to
-the next file.
+And Vim goes to work. It will stop on the first error, which will happen when
+`:next` reached the last file in the argument list and isn't able to move any
+further.
 
 # Solved
 
+Well, looking back, this particular problem would have been perfect for `sed`.
+But sometimes that requires looking at documentation.
+
 And that's it. It seems more complicated than it actually is, and once you've
-been through it a few times, you can do this very quickly. Vim's ability to
+been through it a few times, you can do it very quickly. Vim's ability to
 record and replay keystrokes, combined with its commands to navigate in and
 across files, make an incredibly powerful combination.
 
+To show how easy this process is, here is a screencast of me walking through
+the problem outlined above on NeatlineMaps code.
 
-[clioweb]: https://twitter.com/clioweb "Jeremy Boggs"
+
+[clioweb]: http://clioweb.org/  "Jeremy Boggs"
 [nlmaps]: https://github.com/scholarslab/NeatlineMaps "NeatlineMaps"
 [vim]: http://www.vim.org/ "Vim"
 [modelines]: http://vim.wikia.com/wiki/Modeline_magic "Modeline magic"
