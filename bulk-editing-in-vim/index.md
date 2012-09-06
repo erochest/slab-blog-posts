@@ -36,7 +36,7 @@ Jeremy had tried to add some Vim [mode lines][modelines] to some PHP files.
 These are comments at the top of a file for setting options in Vim. Currently,
 they look [like this][nlmapmode]:
 
-```vim
+```php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 ```
 
@@ -59,7 +59,7 @@ command-line and pass in files there, the file names are stored in the
 see what files are in it or to set the files it contains---using the `:args`
 command:
 
-```vim
+```bash
 :args **/*.php
 ```
 
@@ -87,7 +87,7 @@ to make on all files and record the keystrokes into a buffer. For this we chose
 the *t* buffer. There's no reason for that particular letter: It was just the
 first one I thought of:
 
-```vim
+```bash
 qt
 ```
 
@@ -99,7 +99,7 @@ ahead and make the edit.
 What I had Jeremy do was slightly more complicated and precise, but basically,
 I had him do this:
 
-```vim
+```bash
 :%s/softtabstop=4;/softtabstop=4:/e
 ```
 
@@ -111,7 +111,7 @@ not have a modline (and not all did), it would keep going.
 
 Once we've made the change, let's save it and move to the next file.
 
-```vim
+```bash
 :wn
 ```
 
@@ -119,7 +119,7 @@ This combines the *w*rite command and the *n*ext command (from above).
 
 That's all we need to do for each file. Now hit *q* to stop recording:
 
-```vim
+```bash
 q
 ```
 
@@ -136,7 +136,7 @@ perform the command. For example, *j* moves down one line, and *10j* moves down
 
 In this case, tell it to play the recorded keystrokes 100 times:
 
-```vim
+```bash
 100@t
 ```
 
@@ -155,8 +155,10 @@ record and replay keystrokes, combined with its commands to navigate in and
 across files, make an incredibly powerful combination.
 
 To show how easy this process is, here is a screencast of me walking through
-the problem outlined above on NeatlineMaps code.
+the problem outlined above on NeatlineMaps code. You may want to [click
+through][screencast] to a larger version, more readable version of the video.
 
+<iframe src="http://player.vimeo.com/video/48900819" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/48900819">Bulk Editing Vim</a> from <a href="http://vimeo.com/user2087066">Eric Rochester</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
 
 [clioweb]: http://clioweb.org/  "Jeremy Boggs"
 [nlmaps]: https://github.com/scholarslab/NeatlineMaps "NeatlineMaps"
@@ -166,4 +168,5 @@ the problem outlined above on NeatlineMaps code.
 [args]: http://vimdoc.sourceforge.net/htmldoc/editing.html#:args
 [q]: http://vimdoc.sourceforge.net/htmldoc/repeat.html#q
 [s]: http://vimdoc.sourceforge.net/htmldoc/change.html#:s
+[screencast]: https://vimeo.com/48900819 "Bulk Editing Vim"
 
