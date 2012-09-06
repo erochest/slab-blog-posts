@@ -13,7 +13,7 @@ def fix_pre(match):
 
 
 for line in sys.stdin:
-    line = re.sub(r'<pre(?: class="(?P<lang>\w+)")><code>', fix_pre, line)
+    line = re.sub(r'<pre(?: class="sourceCode (?P<lang>\w+)")><code[^>]*>', fix_pre, line)
     line = re.sub(r'-m &quot;(.*)&quot;', r'-m "\1"', line)
     line = re.sub(r'</code></pre>', '\n[/sourcecode]\n', line)
     sys.stdout.write(line)
