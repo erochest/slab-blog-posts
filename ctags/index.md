@@ -1,26 +1,24 @@
 
-When I'm programming, I spend a lot of time code spelunking. A lot of times,
-the best documentation for a system is the source code for it. Knowing how to
-get to important places in your code and---probably more importantly---in
-others' code makes a huge difference in how productive you are and even in what
-you can figure out how to do.
+When I'm programming, I spend a lot of time code spelunking (*use the source,
+Luke!*). A lot of times, the best documentation for a system is the source code
+for it. Knowing how to get to important places in your code and in others' code
+makes a huge difference in how productive you are and even in what you can
+figure out how to do.
 
-Probably the most important location for any method, function, class, variable,
-or whatsit is where it's defined. Usually there's documentation near where it's
-defined. Sometimes there are parameters that you didn't know about. It's all
-very useful.
+And the most important location for any method, function, class, variable, or
+whatsit is where it's defined. Usually there's documentation near. Sometimes
+there is information about parameters. It's all very useful.
 
-(The second most important places in the code for something are the places
-where it's used. Unfortunately, `ctags` won't help you with that.)
+For finding those places, [`CTags`][ctags] is indispensable.
 
 # What is `ctags`?
 
 [`CTags`][ctags] is program that finds the lines of code where things are
 defined. It knows about [41 languages][langs]. (And if your favorite language
-isn't on the list, you can probably find another program that generates tags
-files for it.) You run it occasionally, and it indexes your code and stores it
-in a file named `tags`. Your editor reads this file and helps you navigate
-through your code like a ninja. Or like a pirate, if you prefer.
+isn't on the list, you can probably find another program that generates
+compatible tags files for it.) You run it occasionally, and it indexes your
+code and stores it in a file named `tags`. Your editor reads this file and
+helps you jump through your code.
 
 # Installing `ctags`
 
@@ -34,7 +32,7 @@ compiled for Windows. Download this and unzip it somewhere on your `%PATH%`.
 ## Linux
 
 If you're using Linux, all major distributions have a package for `ctags`. See
-your distribution's documentation for details.
+your documentation for details.
 
 ## Mac
 
@@ -81,12 +79,15 @@ $ cd /Users/err8n/p/neatline/omeka/plugins/NeatlineFeatures/
 ```
 
 Now, let's run ctags over the code base. We want to to walk through the entire
-directory tree. But here's the catch: we want it to walk over the entire
+directory tree. But here's the catch: we really want it to walk over the entire
 [Omeka][omeka] directory, including the Features plugin:
 
 ```bash
 $ ctags -R ../..
 ```
+
+This runs `ctags` over everything in the Omeka directory (`../..`) and all
+subdirectories (`-R`).
 
 This will take a while, and you'll get some warnings about JavaScript files.
 Don't worry about them. CTags has a few problems parsing JavaScript, but that
@@ -96,12 +97,12 @@ Let's see what we have:
 
 ```bash
 $ ls -lh tags
--rw-r--r--  1 err8n  staff    40M Sep 14 16:00 tags
+-rw-r--r--  1 err8n  staff    23M Sep 14 16:00 tags
 $ wc -l tags
-   86552 tags
+   75917 tags
 ```
 
-Wow! More than 86,000 lines and 40MB. That's a lot of indexing. But then,
+Wow! More than 76,000 lines and 23MB. That's a lot of indexing. But then,
 Omeka's a large codebase.
 
 What's in the file? Let's not worry about that right now. It's plain text, and
@@ -109,22 +110,23 @@ there is some metadata and lines detailing identifiers and files and line
 numbers. It's actually a little scary, and we don't have to worry about that
 anyway.
 
-(If you're curious about the file format, [look at the format page][format].)
+(If you're really curious about the file format, [look at the format
+page][format].)
 
 The tags file can be used by [a bunch of different text editors][ctagstools].
 In fact, there's more than is on that list. Here are links to integrating tags
-into your editor:
+into some popular editors:
 
 * [OpenCTags][openctags]: An add-on for using tags with Crimson Editor,
   EditPlus, UltraEdit, and Notepad++.
 * [Emacs][emacs]: Comes with `etags`, so it supports tags out of the box.
-* [CTags bundle][textmatectags]: A bundle for using tags from
+* [CTags bundle][textmatectags]: A bundle for using tags in
   [TextMate][textmate].
 * [Sublime Text 2 and CTags][sublimectags]: An add-on for using tags with
   [Sublime Text 2][sublime2].
 
 I use Vim, and it comes with support for tags files built in. The rest of this
-post talks about how to use it.
+post shows about how to use tags from Vim.
 
 # Using with Vim
 
@@ -177,7 +179,7 @@ At the bottom of the Vim window, it says "tag 1 of 11 or more".
 Interesting. How do I get to them?
 
 In normal mode, I just use the command `:tselect`. Now Vim displays a list of
-everwhere that `fetchAll` is defined. I can select the number for which one
+everywhere that `fetchAll` is defined. I can select the number for which one
 I want, and Vim moves me there.
 
 ### Examining the Tag Stack
@@ -190,9 +192,9 @@ tags you've jumped to and where it is.
 
 ### Backward
 
-Now that I've looked up what I wanted to, I need to move back to where I was.
-To do that, I just hit `Control-t` multiple times. Each time I do, it pops one
-position off the stack and moves be back to the previous tag location.
+At this point, I want to move back to where I was. To do that, I just hit
+`Control-t` multiple times. Each time I do, it pops one position off the stack
+and moves be back to the previous tag location.
 
 ### Navigating into a new window
 
@@ -213,16 +215,20 @@ As [the waynebot][waynebot] says, "Ba-BAM!"
 
 So here's what we've learned today:
 
-* `:tag [identifier]` --- Jump to the identifier.
-* `:tags` --- List the tag stack.
-* `Control-]` --- Jump to the tag under the cursor.
-* `:tselect` --- Select which tag location to go to for the current tag.
-* `Control-t` --- Jump back from the current tag.
-* `:stjump [identifier]` --- Jump to the identifier in a new split window.
+----------------------  -------------------------------------------------------
+`:tag [identifier]`     Jump to the identifier.
+`:tags`                 List the tag stack.
+`Control-]`             Jump to the tag under the cursor.
+`:tselect`              Select which tag location to go to for the current tag.
+`Control-t`             Jump back from the current tag.
+`:stjump [identifier]`  Jump to the identifier in a new split window.
+----------------------  -------------------------------------------------------
 
 ## What does it look like?
 
 *Insert screencast here.*
+
+> *With bonus content!*
 
 # Next Steps
 
@@ -233,13 +239,11 @@ I've just presented the basics. Here's some more about using tags in Vim.
 The Vim documentation for [tags][vimdocs] lists all of the many commands Vim
 has for working with tags.
 
-## Taglist
+## Tagbar
 
-[Taglist][taglist] is a Vim plugin that shows the structure of your code for
+[Tagbar][tagbar] is a Vim plugin that shows the structure of your code for
 the file you're in. It opens a side panel and displays the classes, methods,
 and other identifiers defined in the current file.
-
-[CTags and Taglist][andtaglist] is a good blog post to look at for this.
 
 ## Running Automatically
 
@@ -253,7 +257,8 @@ already is.
 
 ----
 
-So let us know, what's your favorite development productivity tool?
+So let us know, what's your favorite development productivity or code
+navigation tool?
 
 
 [vim]: http://www.vim.org/ "Vim"
@@ -272,8 +277,7 @@ So let us know, what's your favorite development productivity tool?
 [sublime2]: http://www.sublimetext.com/2 "Sublime Text 2"
 [waynebot]: https://github.com/waynegraham "waynebot"
 [vimdocs]: http://vimdoc.sourceforge.net/htmldoc/tagsrch.html "tagsrch"
-[taglist]: http://www.vim.org/scripts/script.php?script_id=273 "taglist.vim"
-[andtaglist]: http://www.thegeekstuff.com/2009/04/ctags-taglist-vi-vim-editor-as-sourece-code-browser/ "Ctags and Taglist"
+[tagbar]: http://majutsushi.github.com/tagbar/ "Tagbar"
 [tpope]: http://tpo.pe/ "Tim Pope"
 [withgit]: http://tbaggery.com/2011/08/08/effortless-ctags-with-git.html "Effortless Ctags with Git"
 
