@@ -46,21 +46,21 @@ It is not, in fact, Exuberant CTags, and it's far more limited. Boo!
 You can get the correct version of `ctags` using [Homebrew][homebrew]:
 
 ```bash
-$ brew install ctags
+> brew install ctags
 ```
 
 Now you have to make sure that your shell finds the right version:
 
 ```bash
-$ which ctags
+> which ctags
 /usr/bin/
 ```
 
 Well, that's not right. Let's rearrange our `$PATH`.
 
 ```bash
-$ PATH=/usr/local/bin:$PATH
-$ which ctags
+> PATH=/usr/local/bin:$PATH
+> which ctags
 /usr/local/bin
 ```
 
@@ -75,7 +75,7 @@ your project. Right now, I'm working on [NeatlineFeatures][nlfeatures], so I'll
 use that for this example:
 
 ```bash
-$ cd /Users/err8n/p/neatline/omeka/plugins/NeatlineFeatures/
+> cd /Users/err8n/p/neatline/omeka/plugins/NeatlineFeatures/
 ```
 
 Now, let's run ctags over the code base. We want to to walk through the entire
@@ -83,7 +83,7 @@ directory tree. But here's the catch: we really want it to walk over the entire
 [Omeka][omeka] directory, including the Features plugin:
 
 ```bash
-$ ctags -R ../..
+> ctags -R ../..
 ```
 
 This runs `ctags` over everything in the Omeka directory (`../..`) and all
@@ -96,9 +96,9 @@ won't stop it from indexing the other files.
 Let's see what we have:
 
 ```bash
-$ ls -lh tags
+> ls -lh tags
 -rw-r--r--  1 err8n  staff    23M Sep 14 16:00 tags
-$ wc -l tags
+> wc -l tags
    75917 tags
 ```
 
@@ -135,7 +135,7 @@ to use gVim or MacVim, this may be different (hint: use the `:cd` command).
 I'll just use the command line to start MacVim on one of the models.
 
 ```bash
-$ mvim models/NeatlineFeatureTable.php
+> mvim models/NeatlineFeatureTable.php
 ```
 
 ## Navigating
