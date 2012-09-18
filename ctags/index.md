@@ -209,8 +209,6 @@ the window, and in the new split, it jumps to the tag. If there's more than one
 definition for the tag, it prompts you for which you want, just like `:tselect`
 does.
 
-As [the waynebot][waynebot] says, "Ba-BAM!"
-
 ## Tag Navigation Cheat Sheet
 
 So here's what we've learned today:
@@ -226,7 +224,7 @@ So here's what we've learned today:
 
 ## What does it look like?
 
-*Insert screencast here.*
+<iframe src="http://player.vimeo.com/video/49627409" width="500" height="375" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/49627409">CTags in Vim</a> from <a href="http://vimeo.com/user2087066">Eric Rochester</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
 
 > *With bonus content!*
 
