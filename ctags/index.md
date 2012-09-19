@@ -14,15 +14,15 @@ For finding those places, [`CTags`][ctags] is indispensable.
 # What is `ctags`?
 
 [`CTags`][ctags] is program that finds the lines of code where things are
-defined. It knows about [41 languages][langs]. (And if your favorite language
-isn't on the list, you can probably find another program that generates
-compatible tags files for it.) You run it occasionally, and it indexes your
-code and stores it in a file named `tags`. Your editor reads this file and
-helps you jump through your code.
+defined. It knows [41 languages][langs]. (And if your favorite language isn't
+on the list, you can probably find another program that generates compatible
+tags files for it.) You run it occasionally, and it indexes your code and
+stores it in a file named `tags`. Your editor reads this file and helps you
+jump through your code.
 
 # Installing `ctags`
 
-The first step in using `ctags` is to install it. Duh.
+The first step in using `ctags` is to install it.
 
 ## Windows
 
@@ -39,9 +39,9 @@ your documentation for details.
 I've saved the Mac installation for last, because it's the most complicated.
 You weren't expecting that, were you?
 
-Mac OS X comes with a program named `ctags`. Yay!
+Mac OS X comes with a program named `ctags`.
 
-It is not, in fact, Exuberant CTags, and it's far more limited. Boo!
+Unfortunately, it is not, in fact, Exuberant CTags, and it's far more limited.
 
 You can get the correct version of `ctags` using [Homebrew][homebrew]:
 
@@ -64,8 +64,8 @@ Well, that's not right. Let's rearrange our `$PATH`.
 /usr/local/bin
 ```
 
-That's better. You probably want to put that into your `~/.bashrc` file to make
-sure you find the right `ctags` in the future also.
+That's better. You probably want to put that into your `~/.bash_profile` file
+to make sure you find the right `ctags` in the future also.
 
 # Using `ctags` in a Text Editor
 
@@ -75,7 +75,7 @@ your project. Right now, I'm working on [NeatlineFeatures][nlfeatures], so I'll
 use that for this example:
 
 ```bash
-> cd /Users/err8n/p/neatline/omeka/plugins/NeatlineFeatures/
+> cd ~/omeka/plugins/NeatlineFeatures/
 ```
 
 Now, let's run ctags over the code base. We want to to walk through the entire
@@ -138,7 +138,7 @@ I'll just use the command line to start MacVim on one of the models.
 > mvim models/NeatlineFeatureTable.php
 ```
 
-## Navigating
+## The Tag Stack
 
 The main point of all this, of course, are the powerful navigation commands.
 Let's see what they are.
@@ -146,20 +146,16 @@ Let's see what they are.
 Vim maintains a stack of locations where we've been. This stack starts out
 empty.
 
-### Forward
+## Navigating Forward
 
 When you jump to a tag, your current location is added to the stack. As you
 jump ahead, more locations are added to the stack. Here's how to jump forward
 and add locations to the stack.
 
-#### Jumping from the cursor
-
 First say I want to look at the code for `Omeka_Db_Table`. I just move down to
 where it's mentioned in the code and hit `Control-]`.
 
 And I'm there. I can open up the class and look in it. 
-
-#### Jumping to a tag target
 
 But say this doesn't tell me what I want. I really want to look at
 `Zend_Db_Table`. I don't see it, so I can't use `Control-]`. Instead, from
@@ -169,8 +165,6 @@ And I'm there.
 
 But it's empty. I need to jump to `Zend_Db_Table_Abstract`. I just move my
 cursor down there and hit `Control-]`.
-
-#### Selecting which target
 
 Say I want to know how `fetchAll` is defined. I move down there and open it up.
 But how else is it defined? I put my cursor on `fetchAll` and hit `Control-]`.
@@ -182,7 +176,7 @@ In normal mode, I just use the command `:tselect`. Now Vim displays a list of
 everywhere that `fetchAll` is defined. I can select the number for which one
 I want, and Vim moves me there.
 
-### Examining the Tag Stack
+## Examining the Tag Stack
 
 Now I've jumped several times, and I'm a little confused about where I am. How
 do I find myself again?
@@ -190,13 +184,13 @@ do I find myself again?
 In normal mode, use the `:tags` command. Vim will print out a list of which
 tags you've jumped to and where it is.
 
-### Backward
+## Navigating Backward
 
 At this point, I want to move back to where I was. To do that, I just hit
 `Control-t` multiple times. Each time I do, it pops one position off the stack
 and moves be back to the previous tag location.
 
-### Navigating into a new window
+## Jumping into a new window
 
 Of course, it would be nice to be able to see what I'm working on *and* the tag
 too. Yes, I can be demanding. Fortunately, Vim can oblige me.
@@ -224,7 +218,7 @@ So here's what we've learned today:
 
 ## What does it look like?
 
-<iframe src="http://player.vimeo.com/video/49627409" width="500" height="375" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/49627409">CTags in Vim</a> from <a href="http://vimeo.com/user2087066">Eric Rochester</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+<iframe src="http://player.vimeo.com/video/49681267" width="500" height="375" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/49681267">CTags in Vim</a> from <a href="http://vimeo.com/scholarslab">Scholars' Lab</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
 
 > *With bonus content!*
 
