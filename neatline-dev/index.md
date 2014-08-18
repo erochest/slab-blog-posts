@@ -31,7 +31,7 @@ That's all. You should be ready to go.
 
 This project includes a number settings that you can change to customize your installation. Those are found in the file [`playbook.yaml`][playbook]. The relevant section is labelled `vars`, and it allows you to set information about the Omeka database (`omeka_db_user`, `omeka_db_password`, and `omeka_db_name`), which version of Omeka you wish to use (`omeka_version`), where you wish to install it (`omeka_dir`), and where you want to point your browser to (`dev_hostname`) as you're working on the site. The defaults are:
 
-```yaml
+```
 vars:
   db_user: root
   db_password:
@@ -67,7 +67,7 @@ After your computer whirs away for a while, you'll get your prompt back. When th
 
 The Ansible playbook does a number of tasks.
 
-1. It installs all the dependencies that you'll need, including [PHP][php], [NodeJS][node], and [MySQL][mysql].
+1. It installs all the dependencies that you'll need, including [PHP][phpnet], [NodeJS][node], and [MySQL][mysql].
 1. It sets MySQL to start automatically when you log in, and it creates the Omeka MySQL user and database.
 1. It configures [Apache][apache] to work with PHP and to find your Omeka directory.
 1. It downloads and configures [Omeka][omeka] and turns on debugging.
@@ -110,7 +110,7 @@ As we get those parts in place, we'll keep you posted.
 [nl]: http://neatline.org/
 [nldev]: https://github.com/erochest/neatline.dev/tree/mac-ansible
 [node]: http://nodejs.org/
-[php]: http://php.net/
+[phpnet]: http://php.net/
 [phpunit]: http://phpunit.de/
 [playbook]: https://github.com/erochest/neatline.dev/blob/mac-ansible/playbook.yaml
 [pullrequest]: https://help.github.com/articles/using-pull-requests
