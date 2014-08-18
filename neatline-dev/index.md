@@ -1,54 +1,63 @@
 
 At the Scholars' Lab, we're big big advocates of Open Source. All of our
 projects are available freely and openly on [Github][gh], and we're always more
-than happy to accept pull requests. We'd like to be able to facilitate
-everyone's ability to contribute to our projects as much as they're able to and
-comfortable with.
+than happy to accept pull requests. We'd like to be able to empower everyone to
+contribute to our projects as much as they're able to and comfortable with.
 
 Unfortunately, one of our flagship projects, [Neatline][nl], isn't easy to
 contribute to. There are a number of reasons for this, but one is that the
 development environment is not trivial to get set up. In order to address this
-and make it easier to start contributing to Neatline, we've developed an
+and make it easier for others to contribute, we've developed an
 [Ansible][ansible] playbook that takes a not-quite-stock Mac and sets up an
 instance of Omeka with the Neatline plugin available, as well as all the tools
 necessary for working on Neatline.
 
-We've published this on [Github][gh] in the [`neatline.dev` repository, on the
-`mac-ansible` branch][nldev]. You can get this by cloning it to your local
-machine. (Since this is for getting started developing Neatline, I assume that
-you're already familiar with [git][git]. If not, [there][git1] [are][git2]
-[lots][git3] [of][git4] [great][git5] [tutorials][git6].)
+[Ansible][ansible] is a system for setting up and configuring systems. It's
+often used to set up multiple servers—for instance, a database server and a
+static web server, both working with a dynamic web applications deployed on
+several computers. If you're familiar with [Chef][chef] or [Puppet][puppet],
+Ansible solves the same problems. In this case, we'll use it to configure our
+local development workstation.
 
-    $ git clone --branch mac-ansible https://github.com/erochest/neatline.dev.git
-    $ cd neatline.dev
+We've published these playbooks on [Github][gh] in the [`neatline.dev`
+repository, on the `mac-ansible` branch][nldev]. You can get this by cloning it
+to your local machine. (Since this is for getting started developing Neatline,
+I assume that you're already comfortable with [git][git]. If not, [there][git1]
+[are][git2] [lots][git3] [of][git4] [great][git5] [tutorials][git6].)
+
+```bash
+$ git clone --branch mac-ansible https://github.com/erochest/neatline.dev.git
+```
 
 ## Requirements
 
 In creating this, I've aimed for starting from a stock Mac. And I missed pretty
-badly. However, I've attempted to keep the necessary prerequisites minimal.
-You'll need to have these things installed.
+badly. However, the necessary prerequisites are minimal. You'll just need to
+have these things installed.
 
 * [XCode][xcode]
 * [Homebrew][brew]
 
-Once those two are installed, you can install the other two dependencies. These
-are available through [Homebrew][brew]. So open terminal and type these lines:
+Once those two are on your machine, you can install the other two dependencies.
+These are available through [Homebrew][brew]. So open Terminal and type these
+lines:
 
-    $ brew install python
-    $ brew install ansible
+```bash
+$ brew install python
+$ brew install ansible
+```
 
 That's all. You should be ready to go.
 
 ## Settings
 
-This includes a number settings that you can change before you get start in
-order to customize your installation. Those are found in the file
-[`playbook.yaml`][playbook]. The relevant section is labelled `vars`, and it
-allows you to set information about the Omeka database (`omeka_db_user`,
-`omeka_db_password`, and `omeka_db_name`), which version of Omeka you wish to
-use (`omeka_version`), where you wish to install it (`omeka_dir`), and where
-you want to point your browser to (`dev_hostname`). The defaults for the system
-are:
+This project includes a number settings that you can change to customize your
+installation. Those are found in the file [`playbook.yaml`][playbook]. The
+relevant section is labelled `vars`, and it allows you to set information about
+the Omeka database (`omeka_db_user`, `omeka_db_password`, and `omeka_db_name`),
+which version of Omeka you wish to use (`omeka_version`), where you wish to
+install it (`omeka_dir`), and where you want to point your browser to
+(`dev_hostname`) as you're working on the site. The defaults are:
 
 ```yaml
 vars:
@@ -65,21 +74,31 @@ vars:
   php_version: 55
 ```
 
-What you'd like your Omeka/Neatline installation to look like.
+Change these to reflect what you'd like your personal Omeka/Neatline
+installation to look like.
+
+One option that I'll call out in particular is `neatline_repo`. This is the git
+repository that you'll be working with. If you're using github to host your
+project, you can [fork][fork] the primary Neatline repository (from the URL
+given above). And when you've completed your work, if you'd like to contribute
+back, you can send us a [pull request][pullrequest] through the Github site.
 
 ## Setting Up
 
-Finally, we're ready to actually set up the system. This is quite easy. In the
+Finally, we're ready to actually create the system. This is quite easy. In the
 Terminal, from the `neatline.dev` directory, run the `neatline-dev` script.
 
-    $ ./neatline-dev
+```bash
+$ cd neatline.dev
+$ ./neatline-dev
+```
 
 Now wait.
 
-After it whirs away for a while, you'll get your prompt back. When that
-happens, you should be able to point your browser to http://omeka-neatline.dev
-(in the example above). You should be prompted with a form to complete the
-Omeka installation.
+After your computer whirs away for a while, you'll get your prompt back. When
+that happens, you should be able to point your browser to
+http://omeka-neatline.dev (in the example above). There you'll see the Omeka
+installation form.
 
 ## What Just Happened?
 
@@ -91,12 +110,13 @@ The Ansible playbook does a number of tasks.
    Omeka MySQL user and database.
 1. It configures [Apache][apache] to work with PHP and to find your Omeka
    directory.
-1. It downloads and configures [Omeka][omeka], including debugging settings.
+1. It downloads and configures [Omeka][omeka] and turns on debugging.
 1. It clones [Neatline][nl] into Omeka's `plugin` directory.
-1. It sets up [git flow][flow] for working in Neatline and leaves you in the
-   `develop` branch.
-1. And it installs the JavaScript and PHP tools, including [Grunt][grunt],
-   [Bower][bower], [Composer][composer], and [PHPUnit][phpunit].
+1. It initializes [git flow][flow] for working in Neatline and leaves you on
+   the `develop` branch.
+1. And it installs the necessary JavaScript and PHP tools, including
+   [Grunt][grunt], [Bower][bower], [Composer][composer], and
+   [PHPUnit][phpunit].
 
 After all that, it really needs a break.
 
@@ -109,16 +129,19 @@ Neatline code-base approachable. Some more things that we have planned include:
 
 * Documentation on all the moving parts.
 * Documentation on the overall architecture of Neatline.
-* Documentation on the code. What's where?
+* Documentation on the code. What's where? If you wish to change something,
+  where would you find it?
 
 As we get those parts in place, we'll keep you posted.
 
-[ansible]: http://www.ansible.com/
+[ansible]:http://www.ansible.com/
 [apache]: http://httpd.apache.org/
 [bower]: http://bower.io/
 [brew]: http://brew.sh/
+[chef]: http://www.getchef.com/
 [composer]: https://getcomposer.org/
 [flow]: https://github.com/nvie/gitflow
+[fork]: https://help.github.com/articles/fork-a-repo
 [gh]: https://github.com/
 [git]: http://git-scm.com/
 [git1]: http://rogerdudler.github.io/git-guide/
@@ -135,6 +158,8 @@ As we get those parts in place, we'll keep you posted.
 [php]: http://php.net/
 [phpunit]: http://phpunit.de/
 [playbook]: https://github.com/erochest/neatline.dev/blob/mac-ansible/playbook.yaml
+[pullrequest]: https://help.github.com/articles/using-pull-requests
+[puppet]: http://puppetlabs.com/
 [omeka]: http://omeka.org/
 [xcode]: https://itunes.apple.com/us/app/xcode/id497799835
 
